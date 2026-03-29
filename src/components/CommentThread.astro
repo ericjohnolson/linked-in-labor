@@ -1,0 +1,194 @@
+---
+import Comment from "./Comment.astro";
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  comments: CollectionEntry<"comments">[];
+  /** Max top-level comments to show before a "Show more" note */
+  initialVisible?: number;
+};
+
+const { comments, initialVisible = 5 } = Astro.props;
+
+// Sort all comments by their order field
+const sorted = [...comments].sort((a, b) => a.data.order - b.data.order);
+
+// Separate top-level comments (parentComment === null) from replies
+const topLevel = sorted.filter((c) => c.data.parentComment === null);
+const replies = sorted.filter((c) => c.data.parentComment !== null);
+
+// Build a map: parentCommentId -> reply entries
+const replyMap = new Map<string, CollectionEntry<"comments">[]>();
+for (const reply of replies) {
+  const parentId = reply.data.parentComment as string;
+  if (!replyMap.has(parentId)) replyMap.set(parentId, []);
+  replyMap.get(parentId)!.push(reply);
+}
+
+// Render top-level comments and their replies
+// Two-level nesting max: top-level comments can have replies, replies cannot have sub-replies
+const visibleTopLevel = topLevel.slice(0, initialVisible);
+const hiddenCount = topLevel.length - visibleTopLevel.length;
+
+// Pre-render content for each comment
+// We need the rendered HTML for the slot content
+const renderedComments = await Promise.all(
+  sorted.map(async (comment) => {
+    const { Content } = await comment.render();
+    return { comment, Content };
+  })
+);
+
+const renderedMap = new Map(
+  renderedComments.map(({ comment, Content }) => [comment.id, Content])
+);
+---
+
+<div class="comment-thread">
+  {visibleTopLevel.map((topComment) => {
+    const TopContent = renderedMap.get(topComment.id)!;
+    const commentReplies = replyMap.get(topComment.data.commentId) ?? [];
+
+    return (
+      <div class="comment-thread-item">
+        <Comment
+          author={topComment.data.author}
+          authorTitle={topComment.data.authorTitle}
+          authorAvatar={topComment.data.authorAvatar}
+          timestamp={topComment.data.timestamp}
+          likes={topComment.data.likes}
+          isReply={false}
+        >
+          <TopContent />
+        </Comment>
+
+        {commentReplies.length > 0 && (
+          <div class="comment-replies">
+            {commentReplies.length > 2 ? (
+              <details class="replies-details">
+                <summary class="replies-summary">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="replies-chevron">
+                    <path d="M5.5 9.5l6.5 6.5 6.5-6.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {commentReplies.length} repl{commentReplies.length !== 1 ? 'ies' : 'y'}
+                </summary>
+                {commentReplies.map((reply) => {
+                  const ReplyContent = renderedMap.get(reply.id)!;
+                  return (
+                    <Comment
+                      author={reply.data.author}
+                      authorTitle={reply.data.authorTitle}
+                      authorAvatar={reply.data.authorAvatar}
+                      timestamp={reply.data.timestamp}
+                      likes={reply.data.likes}
+                      isReply={true}
+                    >
+                      <ReplyContent />
+                    </Comment>
+                  );
+                })}
+              </details>
+            ) : (
+              commentReplies.map((reply) => {
+                const ReplyContent = renderedMap.get(reply.id)!;
+                return (
+                  <Comment
+                    author={reply.data.author}
+                    authorTitle={reply.data.authorTitle}
+                    authorAvatar={reply.data.authorAvatar}
+                    timestamp={reply.data.timestamp}
+                    likes={reply.data.likes}
+                    isReply={true}
+                  >
+                    <ReplyContent />
+                  </Comment>
+                );
+              })
+            )}
+          </div>
+        )}
+      </div>
+    );
+  })}
+
+  {hiddenCount > 0 && (
+    <button class="load-more-btn" type="button">
+      Load {hiddenCount} more comment{hiddenCount !== 1 ? 's' : ''}
+    </button>
+  )}
+</div>
+
+<style>
+  .comment-thread {
+    padding: 8px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .comment-thread-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .comment-replies {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .replies-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .replies-summary {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 4px 4px 48px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+    list-style: none;
+    user-select: none;
+    width: fit-content;
+  }
+
+  .replies-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .replies-summary:hover {
+    text-decoration: underline;
+  }
+
+  .replies-chevron {
+    transition: transform 0.2s ease;
+    color: var(--color-primary);
+  }
+
+  details[open] .replies-chevron {
+    transform: rotate(180deg);
+  }
+
+  .load-more-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: var(--font-stack);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-align: left;
+    padding-left: 48px;
+    margin-top: 4px;
+  }
+
+  .load-more-btn:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,210 @@
+---
+import ReactionBar from "./ReactionBar.astro";
+
+type Props = {
+  author: string;
+  authorTitle: string;
+  authorAvatar: string;
+  authorFollowers: number;
+  timestamp: string;
+  likes: number;
+  reposts: number;
+  image?: string;
+  body: string;
+  commentCount?: number;
+};
+
+const {
+  author,
+  authorTitle,
+  authorAvatar,
+  authorFollowers,
+  timestamp,
+  likes,
+  reposts,
+  image,
+  body,
+  commentCount = 0,
+} = Astro.props;
+
+function formatFollowers(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000) return Math.round(n / 1_000) + 'K';
+  return n.toLocaleString('en-US');
+}
+
+function formatTimestamp(ts: string): string {
+  const date = new Date(ts);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60_000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  if (diffWeeks < 4) return `${diffWeeks}w`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Convert markdown-style bold/italic to readable text for HTML body
+// Body comes from Astro Content Collections as rendered HTML via slot
+---
+
+<article class="post-card">
+  <!-- Post header: avatar + author info -->
+  <header class="post-header">
+    <div class="post-avatar-wrap">
+      <img
+        src={authorAvatar}
+        alt={author}
+        class="post-avatar"
+        width="48"
+        height="48"
+        loading="lazy"
+      />
+    </div>
+    <div class="post-author-info">
+      <span class="author-name">{author}</span>
+      <span class="headline">{authorTitle}</span>
+      <div class="post-meta">
+        <span class="timestamp">{formatTimestamp(timestamp)}</span>
+        <span class="post-meta-dot" aria-hidden="true">·</span>
+        <span class="timestamp">{formatFollowers(authorFollowers)} followers</span>
+        <!-- Globe icon for public post -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12" class="post-globe-icon" aria-label="Public post">
+          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM2.05 8.5h2.47a12.67 12.67 0 0 0 .89 3.54A5.51 5.51 0 0 1 2.05 8.5zm0-1a5.51 5.51 0 0 1 3.36-3.54A12.67 12.67 0 0 0 4.52 7.5H2.05zM7.5 2.1v5.4H4.53A11.6 11.6 0 0 1 5.42 4a5.56 5.56 0 0 1 2.08-1.9zM8.5 2.1A5.56 5.56 0 0 1 10.58 4a11.6 11.6 0 0 1 .89 3.5H8.5V2.1zm0 11.8v-5.4h3.47a11.6 11.6 0 0 1-.89 3.5 5.56 5.56 0 0 1-2.08 1.9zm-1 0a5.56 5.56 0 0 1-2.08-1.9 11.6 11.6 0 0 1-.89-3.5H7.5v5.4zm3.98-.86A12.67 12.67 0 0 0 12.42 8.5h2.47a5.51 5.51 0 0 1-3.36 3.54zm.89-4.54a12.67 12.67 0 0 0-.89-3.54A5.51 5.51 0 0 1 14.89 7.5h-2.47z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Follow button -->
+    <button class="follow-btn" type="button" aria-label={`Follow ${author}`}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path d="M9 4a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.75 8h-1.5C3.01 8 1 10.01 1 12.25V13h10v-.75C11 10.01 8.99 8 6.75 8zM14 5v1h-1V5h-1V4h1V3h1v1h1v1h-1z" fill="currentColor"/>
+      </svg>
+      Follow
+    </button>
+  </header>
+
+  <!-- Post body -->
+  <div class="post-body">
+    <slot />
+  </div>
+
+  <!-- Optional post image -->
+  {image && (
+    <div class="post-image-wrap">
+      <img
+        src={image}
+        alt="Post image"
+        class="post-image"
+        loading="lazy"
+      />
+    </div>
+  )}
+
+  <!-- Reaction bar (counts + action buttons) -->
+  <ReactionBar likes={likes} reposts={reposts} comments={commentCount} />
+</article>
+
+<style>
+  .post-card {
+    /* card shell is provided by parent .feed-post.card wrapper */
+    background: transparent;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px 0;
+  }
+
+  .post-avatar-wrap {
+    flex-shrink: 0;
+  }
+
+  .post-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--color-divider);
+  }
+
+  .post-author-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .post-meta-dot {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+  }
+
+  .post-globe-icon {
+    color: var(--color-text-secondary);
+  }
+
+  .follow-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 4px 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-primary);
+    font-size: 14px;
+    font-family: var(--font-stack);
+    font-weight: 600;
+    border-radius: 16px;
+    transition: background-color 0.1s ease;
+    margin-left: auto;
+  }
+
+  .follow-btn:hover {
+    background-color: rgba(10, 102, 194, 0.08);
+  }
+
+  .post-body {
+    padding: 8px 16px;
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    color: var(--color-text-primary);
+  }
+
+  .post-body :global(p) {
+    margin-bottom: 8px;
+  }
+
+  .post-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-image-wrap {
+    margin-top: 8px;
+  }
+
+  .post-image {
+    width: 100%;
+    display: block;
+    max-height: 552px;
+    object-fit: cover;
+  }
+
+  /* ReactionBar padding and divider margins are handled in ReactionBar.astro */
+</style>

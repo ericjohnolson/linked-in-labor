@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&display=swap");
+
+/* LinkedIn-style CSS variables and base styles */
+
+:root {
+  --color-primary: #0a66c2;
+  --color-bg: #f4f2ee;
+  --color-card-bg: #ffffff;
+  --color-text-primary: rgba(0, 0, 0, 0.9);
+  --color-text-secondary: rgba(0, 0, 0, 0.6);
+  --color-divider: #e6e9ec;
+
+  --font-stack: "Source Sans 3", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+
+  --font-size-body: 14px;
+  --font-size-author: 15px;
+  --font-size-subtitle: 13px;
+  --font-size-timestamp: 12px;
+  --line-height-body: 1.42;
+
+  --card-border-radius: 8px;
+  --card-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 3px rgba(0, 0, 0, 0.08);
+  --card-padding: 12px 16px;
+  --card-margin-bottom: 8px;
+
+  --feed-max-width: 552px;
+
+  --header-height: 52px;
+  --container-max-width: 1128px;
+  --sidebar-width: 300px;
+  --left-sidebar-width: 225px;
+  --column-gap: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+body {
+  font-family: var(--font-stack);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Feed layout */
+.feed-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding: 24px 16px;
+}
+
+.feed-column {
+  max-width: var(--feed-max-width);
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card component */
+.card {
+  background-color: var(--color-card-bg);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-box-shadow);
+  padding: var(--card-padding);
+  margin-bottom: var(--card-margin-bottom);
+}
+
+/* Typography helpers */
+.author-name {
+  font-size: var(--font-size-author);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.subtitle,
+.headline {
+  font-size: var(--font-size-subtitle);
+  color: var(--color-text-secondary);
+}
+
+.timestamp {
+  font-size: var(--font-size-timestamp);
+  color: var(--color-text-secondary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-divider);
+  margin: 8px 0;
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Site header */
+.site-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: var(--color-card-bg);
+  z-index: 100;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.header-inner {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  height: var(--header-height);
+  padding: 0 16px;
+}
+
+/* Main layout container */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  gap: var(--column-gap);
+  padding-top: calc(var(--header-height) + 24px);
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* Left sidebar */
+.left-sidebar {
+  width: var(--left-sidebar-width);
+  flex-shrink: 0;
+}
+
+/* Right sidebar */
+.right-sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+}

@@ -1,0 +1,283 @@
+---
+const people = [
+  {
+    name: "Karl Marx",
+    title: "Economic Theorist",
+    initials: "KM",
+    color: "#c0392b",
+  },
+  {
+    name: "Friedrich Engels",
+    title: "Industrial Analyst",
+    initials: "FE",
+    color: "#8e44ad",
+  },
+  {
+    name: "Rosa Luxemburg",
+    title: "Political Strategist",
+    initials: "RL",
+    color: "#16a085",
+  },
+  {
+    name: "Antonio Gramsci",
+    title: "Cultural Consultant",
+    initials: "AG",
+    color: "#d35400",
+  },
+];
+
+const footerLinks = [
+  "About",
+  "Accessibility",
+  "Help Center",
+  "Privacy & Terms",
+  "Ad Choices",
+  "Advertising",
+  "Business Services",
+  "Get the LinkedIn app",
+  "More",
+];
+---
+
+<aside class="right-sidebar">
+  <!-- Section 1: Sign-in prompt -->
+  <div class="card sign-in-card">
+    <p class="sign-in-heading">Sign in to see who you know at LinkedIn</p>
+    <a href="#" class="btn-sign-in">Sign in</a>
+    <div class="join-line">
+      <span class="join-text">New to LinkedIn?</span>
+      <a href="#" class="join-link">Join now</a>
+    </div>
+  </div>
+
+  <!-- Section 2: People also viewed -->
+  <div class="card people-card">
+    <h3 class="people-heading">People also viewed</h3>
+    <ul class="people-list">
+      {people.map((person) => (
+        <li class="person-entry">
+          <div
+            class="person-avatar"
+            style={`background-color: ${person.color};`}
+            aria-hidden="true"
+          >
+            {person.initials}
+          </div>
+          <div class="person-info">
+            <span class="person-name">{person.name}</span>
+            <span class="person-title">{person.title}</span>
+          </div>
+          <button class="btn-connect" type="button">
+            Connect
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Section 3: Footer links -->
+  <footer class="sidebar-footer">
+    <nav class="footer-links" aria-label="Footer navigation">
+      {footerLinks.map((link, i) => (
+        <>
+          <a href="#" class="footer-link">{link}</a>
+          {i < footerLinks.length - 1 && (
+            <span class="footer-sep" aria-hidden="true">·</span>
+          )}
+        </>
+      ))}
+    </nav>
+    <p class="footer-copy">LinkedIn Corporation &copy; 2026</p>
+  </footer>
+</aside>
+
+<style>
+  .right-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-margin-bottom, 8px);
+  }
+
+  /* --- Sign-in card --- */
+  .sign-in-card {
+    background-color: var(--color-card-bg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .sign-in-heading {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.35;
+  }
+
+  .btn-sign-in {
+    display: block;
+    padding: 6px 24px;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.1s ease;
+  }
+
+  .btn-sign-in:hover {
+    background-color: #004182;
+    text-decoration: none;
+  }
+
+  .join-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: var(--font-size-subtitle, 13px);
+  }
+
+  .join-text {
+    color: var(--color-text-secondary);
+  }
+
+  .join-link {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  /* --- People also viewed card --- */
+  .people-card {
+    background-color: var(--color-card-bg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 12px 0;
+  }
+
+  .people-heading {
+    font-size: var(--font-size-author, 15px);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    padding: 0 16px 8px;
+  }
+
+  .people-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .person-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+  }
+
+  .person-entry:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .person-avatar {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .person-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .person-name {
+    font-size: var(--font-size-subtitle, 13px);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .person-title {
+    font-size: var(--font-size-timestamp, 12px);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-connect {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    background: none;
+    border: 1px solid var(--color-primary);
+    border-radius: 16px;
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+  }
+
+  .btn-connect:hover {
+    background-color: rgba(10, 102, 194, 0.08);
+  }
+
+  /* --- Footer --- */
+  .sidebar-footer {
+    padding: 4px 8px 8px;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 0;
+    line-height: 1.6;
+  }
+
+  .footer-link {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: 0 2px;
+  }
+
+  .footer-link:hover {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+  }
+
+  .footer-sep {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    padding: 0 2px;
+    user-select: none;
+  }
+
+  .footer-copy {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+</style>

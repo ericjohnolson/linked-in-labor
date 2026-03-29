@@ -1,0 +1,6 @@
+.yaks
+node_modules
+dist
+.astro
+.light
+.playwright-mcp

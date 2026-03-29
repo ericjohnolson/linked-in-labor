@@ -1,0 +1,105 @@
+---
+// No props — stateless chrome component
+---
+
+<aside class="left-sidebar" aria-label="Profile sidebar">
+  <!-- Profile card -->
+  <div class="profile-card">
+    <div class="profile-banner"></div>
+    <div class="profile-info">
+      <div class="profile-avatar">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" width="56" height="56" aria-hidden="true">
+          <circle cx="28" cy="28" r="28" fill="#e7e7e7"/>
+          <circle cx="28" cy="22" r="10" fill="#a0a0a0"/>
+          <ellipse cx="28" cy="46" rx="18" ry="14" fill="#a0a0a0"/>
+        </svg>
+      </div>
+      <p class="profile-welcome">Welcome back!</p>
+    </div>
+  </div>
+
+  <!-- Discover more -->
+  <div class="discover-card">
+    <h3 class="discover-heading">Discover more</h3>
+    <ul class="discover-list">
+      <li><a href="#">Groups</a></li>
+      <li><a href="#">Events</a></li>
+      <li><a href="#">Followed Hashtags</a></li>
+    </ul>
+  </div>
+</aside>
+
+<style>
+  .profile-card {
+    background-color: var(--color-card-bg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    overflow: hidden;
+    margin-bottom: var(--card-margin-bottom);
+  }
+
+  .profile-banner {
+    height: 56px;
+    background: linear-gradient(135deg, #004182 0%, #0a66c2 100%);
+  }
+
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 12px 16px;
+    margin-top: -28px;
+  }
+
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--color-card-bg);
+    overflow: hidden;
+    background-color: #e7e7e7;
+    margin-bottom: 8px;
+  }
+
+  .profile-welcome {
+    font-size: var(--font-size-author);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: center;
+  }
+
+  .discover-card {
+    background-color: var(--color-card-bg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 12px;
+  }
+
+  .discover-heading {
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+  }
+
+  .discover-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .discover-list li {
+    padding: 4px 0;
+  }
+
+  .discover-list a {
+    font-size: var(--font-size-subtitle);
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .discover-list a:hover {
+    text-decoration: underline;
+  }
+</style>

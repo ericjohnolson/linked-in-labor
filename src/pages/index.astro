@@ -1,0 +1,68 @@
+---
+import { getCollection } from "astro:content";
+import FeedLayout from "../layouts/FeedLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import CommentThread from "../components/CommentThread.astro";
+
+// Query all posts and comments from Content Collections
+const allPosts = await getCollection("posts");
+const allComments = await getCollection("comments");
+
+// For each post, render its Content component
+const renderedPosts = await Promise.all(
+  allPosts.map(async (post) => {
+    const { Content } = await post.render();
+    return { post, Content };
+  })
+);
+
+// Group comments by postSlug for efficient lookup
+const commentsByPost = new Map<string, typeof allComments>();
+for (const comment of allComments) {
+  const slug = comment.data.postSlug;
+  if (!commentsByPost.has(slug)) {
+    commentsByPost.set(slug, []);
+  }
+  commentsByPost.get(slug)!.push(comment);
+}
+---
+
+<FeedLayout title="LinkedIn | Workers of the world, you have nothing to lose but your chains!">
+  {renderedPosts.map(({ post, Content }) => {
+    // post.id includes the file extension (e.g. "grind-mindset.md") while
+    // postSlug fields in comments omit it, so strip the extension for lookup.
+    const postSlug = post.id.replace(/\.[^.]+$/, "");
+    const postComments = commentsByPost.get(postSlug) ?? [];
+    const commentCount = postComments.length;
+
+    return (
+      <div class="feed-post card">
+        <PostCard
+          author={post.data.author}
+          authorTitle={post.data.authorTitle}
+          authorAvatar={post.data.authorAvatar}
+          authorFollowers={post.data.authorFollowers}
+          timestamp={post.data.timestamp}
+          likes={post.data.likes}
+          reposts={post.data.reposts}
+          image={post.data.image}
+          body=""
+          commentCount={commentCount}
+        >
+          <Content />
+        </PostCard>
+        {postComments.length > 0 && (
+          <CommentThread comments={postComments} />
+        )}
+      </div>
+    );
+  })}
+</FeedLayout>
+
+<style>
+  /* .feed-post.card provides the card shell; no extra margin needed */
+  .feed-post {
+    padding: 0;
+    overflow: hidden;
+  }
+</style>
