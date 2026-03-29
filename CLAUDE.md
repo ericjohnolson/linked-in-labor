@@ -1,4 +1,4 @@
-# House Party Collab
+# LinkedIn Labor
 
 Satirical LinkedIn clone where Marxist philosophers roast tech bro posts. Static site built with Astro v5, deployed to GitHub Pages.
 

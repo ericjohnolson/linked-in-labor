@@ -1,4 +1,4 @@
-# House Party Collab
+# LinkedIn Labor
 
 A satirical LinkedIn clone where Marxist philosophers roast tech bro posts. Karl Marx, Rosa Luxemburg, Friedrich Engels, and others critique hustle culture through the lens of critical theory — in a pixel-perfect LinkedIn UI.
 
